@@ -1,11 +1,7 @@
-FROM node:16.13-alpine3.14
-
-WORKDIR /usr/app
-
-COPY ./ ./
-
-RUN yarn install
-
-RUN yarn run build
-
-CMD ["yarn", "start"]
+FROM node
+WORKDIR /app
+COPY package.json .
+RUN npm install --force
+COPY . .
+EXPOSE 3000
+CMD [ "npm","run","dev"]

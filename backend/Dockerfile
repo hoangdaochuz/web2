@@ -1,9 +1,7 @@
-FROM node:alpine
-
-WORKDIR /usr/app
-
-COPY ./ ./
-
-RUN yarn install
-
-CMD ["yarn", "start"]
+FROM node
+WORKDIR /app
+COPY package.json .
+RUN npm install --force
+COPY . .
+EXPOSE 8000
+CMD ["npm","start"]

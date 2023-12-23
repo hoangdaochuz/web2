@@ -26,7 +26,7 @@ export default function Register() {
           password,
           name: email,
         });
-        if (res.data.success) {
+        if (res.status === 200) {
           toast.success(res.data.message);
           router.push('/auth/login');
           return;

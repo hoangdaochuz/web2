@@ -21,7 +21,7 @@ export default function Register() {
       toast.error('Passwords are not the same!');
     } else {
       try {
-        const res = await axios.post(`http://localhost:8000/auth/register`, {
+        const res = await axios.post(`${REACT_APP_BACKEND_URL}/auth/register`, {
           email,
           password,
           name: email,

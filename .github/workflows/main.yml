@@ -32,7 +32,7 @@ jobs:
         run: npm run build --prefix frontend
 
       - name: Build Backend
-        run: npm run build --prefix backend
+        run: npm start --prefix backend
 
       - name: Build Admin
         run: npm run build --prefix admin

@@ -23,10 +23,13 @@ import {
 
 export const signIn = (formValues) => async (dispatch) => {
   try {
-    const res = await axios.post(`${config.BACKEND_URL}/auth/admin/login`, {
-      email: formValues.email,
-      password: formValues.password,
-    });
+    const res = await axios.post(
+      `https://class-management-service-vf8y.onrender.com/auth/admin/login`,
+      {
+        email: formValues.email,
+        password: formValues.password,
+      }
+    );
     if (res.data.success) {
       dispatch({
         type: SIGN_IN,

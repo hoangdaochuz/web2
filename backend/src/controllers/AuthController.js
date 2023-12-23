@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const authenticate = require("../authenticate");
 const User = require("../models/User");
 const { email, CLIENT_URL } = require("../config/mainConfig");
@@ -44,7 +44,6 @@ module.exports = {
   // [POST] /auth/register
   postRegister: async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
-    console.log("🚀 ~ file: AuthController.js:52 ~ postRegister: ~ user:", user);
     if (user) {
       res.json({
         code: res.statusCode,

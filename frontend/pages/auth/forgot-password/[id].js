@@ -27,7 +27,6 @@ export default function ResetPassword({ data, forgotPasswordCode }) {
           return;
         } else {
           toast.error(res.data.message);
-          console.log(res.data.message);
         }
       } catch (error) {
         toast.error(error.toString());

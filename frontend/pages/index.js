@@ -22,6 +22,16 @@ Home.getLayout = function getLayout(page) {
   return <Layout>{page}</Layout>;
 };
 
+/**
+ * The function checks if a user session exists and redirects to the login page if not.
+ * @param ctx - The `ctx` parameter stands for "context" and it is an object that contains information
+ * about the incoming request and response. It includes properties such as `req` (the HTTP request
+ * object), `res` (the HTTP response object), `query` (an object containing the query parameters), and
+ * @returns The code is returning an object with either a "redirect" property or a "props" property. If
+ * the session is not found, it returns a "redirect" object with the "permanent" property set to false
+ * and the "destination" property set to '/auth/login'. If the session is found, it returns a "props"
+ * object with an empty object as its value.
+ */
 export async function getServerSideProps(ctx) {
   const _session = await getSession(ctx);
   if (!_session) {

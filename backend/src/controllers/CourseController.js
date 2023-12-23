@@ -1,13 +1,13 @@
-const Course = require('../models/Course');
-const nodemailer = require('nodemailer');
-const { email, CLIENT_URL } = require('../config/mainConfig');
-const Invitation = require('../models/Invitation.js');
-const { nanoid } = require('nanoid');
-const User = require('../models/User');
-const Assignment = require('../models/Assignment');
-const GradeReview = require('../models/GradeReview');
-const notificationService = require('../services/notification');
-const _ = require('lodash');
+const Course = require("../models/Course");
+const nodemailer = require("nodemailer");
+const { email, CLIENT_URL } = require("../config/mainConfig");
+const Invitation = require("../models/Invitation.js");
+const { nanoid } = require("nanoid");
+const User = require("../models/User");
+const Assignment = require("../models/Assignment");
+const GradeReview = require("../models/GradeReview");
+const notificationService = require("../services/notification");
+const _ = require("lodash");
 
 const createDefaultInvitation = (courseId) => {
   const newInvitation = new Invitation({
@@ -30,26 +30,20 @@ module.exports = {
   // [GET] /courses
   getCourses: async (req, res, next) => {
     const courses = await Course.find({
-      $or: [
-        { students: req.user.id },
-        { owner: req.user.id },
-        { teachers: req.user.id },
-      ],
-    }).populate('owner');
+      $or: [{ students: req.user.id }, { owner: req.user.id }, { teachers: req.user.id }],
+    }).populate("owner");
     res.json({ code: res.statusCode, success: true, courses });
   },
 
   // [GET] /courses/all
 
   getAllCourses: async (req, res, next) => {
-    const courses = await Course.find({}).populate('owner');
+    const courses = await Course.find({}).populate("owner");
     res.json({ code: res.statusCode, success: true, courses });
   },
 
   getAnyCourseById: async (req, res, next) => {
-    const course = await Course.findById(req.params.id)
-      .populate('owner')
-      .populate('teachers');
+    const course = await Course.findById(req.params.id).populate("owner").populate("teachers");
     res.json({ code: res.statusCode, success: true, course });
   },
 
@@ -82,10 +76,10 @@ module.exports = {
   // [GET] /courses/:slug
   getCourse: async (req, res, next) => {
     const course = await Course.findOne({ slug: req.params.slug })
-      .populate('teachers')
-      .populate('students')
-      .populate('owner')
-      .populate('assignments');
+      .populate("teachers")
+      .populate("students")
+      .populate("owner")
+      .populate("assignments");
 
     if (course) {
       if (
@@ -98,14 +92,14 @@ module.exports = {
         res.json({
           code: res.statusCode,
           success: false,
-          message: 'You are not allowed to access this course',
+          message: "You are not allowed to access this course",
         });
       }
     } else {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Course not found',
+        message: "Course not found",
       });
     }
   },
@@ -131,7 +125,7 @@ module.exports = {
             res.json({
               code: res.statusCode,
               success: true,
-              message: 'Course updated successfully',
+              message: "Course updated successfully",
             });
           })
           .catch((err) => {
@@ -145,14 +139,14 @@ module.exports = {
         res.json({
           code: res.statusCode,
           success: false,
-          message: 'You are not allowed to modify this course',
+          message: "You are not allowed to modify this course",
         });
       }
     } else {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Course not found',
+        message: "Course not found",
       });
     }
   },
@@ -168,7 +162,7 @@ module.exports = {
             res.json({
               code: res.statusCode,
               success: true,
-              message: 'Course deleted successfully',
+              message: "Course deleted successfully",
             });
           })
           .catch((err) => {
@@ -182,14 +176,14 @@ module.exports = {
         res.json({
           code: res.statusCode,
           success: false,
-          message: 'You are not allowed to delete this course',
+          message: "You are not allowed to delete this course",
         });
       }
     } else {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Course not found',
+        message: "Course not found",
       });
     }
   },
@@ -210,7 +204,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Course not found',
+        message: "Course not found",
       });
       return;
     }
@@ -218,7 +212,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Not authorized',
+        message: "Not authorized",
       });
       return;
     }
@@ -227,7 +221,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'User with email not found',
+        message: "User with email not found",
       });
       return;
     }
@@ -244,7 +238,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Cannot create invitation',
+        message: "Cannot create invitation",
       });
       return;
     }
@@ -254,7 +248,7 @@ module.exports = {
       : `<p>You are invited to be a teacher in a course on the coursepin system. Click on the link if you agree: <a href="${inviteLink}">Link</a></p>`;
     // create reusable transporter object using the default SMTP transport
     let transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
+      host: "smtp.gmail.com",
       port: 587,
       secure: false, // true for 465, false for other ports
       auth: {
@@ -270,21 +264,21 @@ module.exports = {
     let info = await transporter.sendMail({
       from: '"CoursePin" <coursepincourseroom@gmail.com>', // sender address
       to: userEmail, // list of receivers
-      subject: 'Someone invited you to join course', // Subject line
-      text: 'Hello world', // plain text body
+      subject: "Someone invited you to join course", // Subject line
+      text: "Hello world", // plain text body
       html: message, // html body
     });
 
-    console.log('Message sent: %s', info.messageId);
+    console.log("Message sent: %s", info.messageId);
     // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 
     // Preview only available when sending through an Ethereal account
-    console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
     // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
     res.json({
       code: res.statusCode,
       success: true,
-      message: 'Invite success!',
+      message: "Invite success!",
     });
   },
 
@@ -304,25 +298,25 @@ module.exports = {
         res.json({
           code: res.statusCode,
           success: false,
-          message: 'Invitation not found',
+          message: "Invitation not found",
         });
       }
     } else {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Course not found',
+        message: "Course not found",
       });
     }
   },
 
   createInvitation: async (req, res) => {
     const { type, userId } = req.body;
-    if (!type || (type !== '1' && type !== '0') || !userId) {
+    if (!type || (type !== "1" && type !== "0") || !userId) {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Not enough inputs',
+        message: "Not enough inputs",
       });
       return;
     }
@@ -334,7 +328,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Course not found',
+        message: "Course not found",
       });
       return;
     }
@@ -371,7 +365,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Invite not found',
+        message: "Invite not found",
       });
       return;
     }
@@ -379,7 +373,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Unauthorized',
+        message: "Unauthorized",
       });
       return;
     }
@@ -388,7 +382,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Course not found',
+        message: "Course not found",
       });
       return;
     }
@@ -397,7 +391,7 @@ module.exports = {
         res.json({
           code: res.statusCode,
           success: false,
-          message: 'Already a teacher',
+          message: "Already a teacher",
         });
         return;
       }
@@ -405,7 +399,7 @@ module.exports = {
         res.json({
           code: res.statusCode,
           success: false,
-          message: 'You have already joined this course',
+          message: "You have already joined this course",
         });
         return;
       }
@@ -418,7 +412,7 @@ module.exports = {
         res.json({
           code: res.statusCode,
           success: false,
-          message: 'You have already joined this course',
+          message: "You have already joined this course",
         });
         return;
       }
@@ -432,7 +426,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: true,
-        message: 'Course joined successfully',
+        message: "Course joined successfully",
         course: course,
       });
     } catch (err) {
@@ -447,7 +441,7 @@ module.exports = {
   getAllAssignment: async (req, res, next) => {
     const course = await Course.findOne({
       slug: req.params.slug,
-    }).populate('assignments');
+    }).populate("assignments");
     if (course) {
       if (
         course.students.toString().includes(req.user.id) ||
@@ -472,14 +466,14 @@ module.exports = {
         res.json({
           code: res.statusCode,
           success: false,
-          message: 'You are not allowed to access this course',
+          message: "You are not allowed to access this course",
         });
       }
     } else {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Course not found',
+        message: "Course not found",
       });
     }
   },
@@ -490,7 +484,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Course not found',
+        message: "Course not found",
       });
       return;
     }
@@ -498,7 +492,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Unauthorized',
+        message: "Unauthorized",
       });
       return;
     }
@@ -514,7 +508,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: true,
-        message: 'Assignment added successfully',
+        message: "Assignment added successfully",
         assignment: newAssignment,
       });
     } catch (err) {
@@ -532,7 +526,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Course not found',
+        message: "Course not found",
       });
       return;
     }
@@ -540,7 +534,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Unauthorized',
+        message: "Unauthorized",
       });
       return;
     }
@@ -550,7 +544,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Assignment not found',
+        message: "Assignment not found",
       });
       return;
     }
@@ -561,7 +555,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: true,
-        message: 'Assignment updated successfully',
+        message: "Assignment updated successfully",
         assignment: assignment,
       });
     } catch (err) {
@@ -579,7 +573,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Course not found',
+        message: "Course not found",
       });
       return;
     }
@@ -587,7 +581,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Unauthorized',
+        message: "Unauthorized",
       });
       return;
     }
@@ -596,7 +590,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Assignment not found',
+        message: "Assignment not found",
       });
       return;
     }
@@ -609,7 +603,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: true,
-        message: 'Assignment deleted successfully',
+        message: "Assignment deleted successfully",
       });
     } catch (err) {
       res.json({
@@ -627,7 +621,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Course not found',
+        message: "Course not found",
       });
       return;
     }
@@ -636,37 +630,33 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Assignment not found',
+        message: "Assignment not found",
       });
       return;
     }
     if (!req.isTeacher) {
       if (req.isMapped) {
         assignment.grades = assignment.grades.find((grade) => {
-          if (
-            grade.id.toString() === req.user.student.toString() &&
-            !grade.draft
-          )
-            return true;
+          if (grade.id.toString() === req.user.student.toString() && !grade.draft) return true;
         });
         return res.json({
           code: res.statusCode,
           success: true,
-          message: 'Assignments found',
+          message: "Assignments found",
           assignments: assignment,
         });
       }
       return res.json({
         code: res.statusCode,
         success: true,
-        message: 'Assignments found',
+        message: "Assignments found",
         assignments: _.omit(assignment, grades),
       });
     }
     res.json({
       code: res.statusCode,
       success: true,
-      message: 'Assignments found',
+      message: "Assignments found",
       assignments: assignment,
     });
   },
@@ -675,7 +665,6 @@ module.exports = {
     const course = req.course;
     let { studentIds } = req.body;
     studentIds = _.uniq(studentIds);
-    console.log(studentIds);
     try {
       if (!studentIds) {
         course.studentIds = studentIds;
@@ -693,7 +682,7 @@ module.exports = {
       res.json({
         code: 200,
         success: true,
-        message: 'Student ids set successfully',
+        message: "Student ids set successfully",
       });
     } catch (err) {
       res.json({
@@ -711,7 +700,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Assignment not found',
+        message: "Assignment not found",
       });
       return;
     }
@@ -719,7 +708,7 @@ module.exports = {
       return res.json({
         code: res.statusCode,
         success: true,
-        message: 'Grade found',
+        message: "Grade found",
         grade: assignment.grades,
       });
     }
@@ -727,20 +716,16 @@ module.exports = {
       return res.json({
         code: res.statusCode,
         success: true,
-        message: 'Grade found',
+        message: "Grade found",
         grade: assignment.grades.find((grade) => {
-          if (
-            grade.id.toString() === req.user.student.toString() &&
-            !grade.draft
-          )
-            return true;
+          if (grade.id.toString() === req.user.student.toString() && !grade.draft) return true;
         }),
       });
     }
     return res.json({
       code: res.statusCode,
       success: false,
-      message: 'Unauthorized',
+      message: "Unauthorized",
     });
   },
 
@@ -752,7 +737,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Student is not in this class',
+        message: "Student is not in this class",
       });
       return;
     }
@@ -761,7 +746,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Assignment not found',
+        message: "Assignment not found",
       });
       return;
     }
@@ -787,7 +772,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: true,
-        message: 'Grade set successfully',
+        message: "Grade set successfully",
       });
     } catch (err) {
       res.json({
@@ -808,7 +793,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: false,
-        message: 'Assignment not found',
+        message: "Assignment not found",
       });
       return;
     }
@@ -823,7 +808,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: true,
-        message: 'Grades set successfully',
+        message: "Grades set successfully",
       });
     } catch (err) {
       res.json({
@@ -843,7 +828,7 @@ module.exports = {
       return res.json({
         code: res.statusCode,
         success: false,
-        message: 'Assignment not found',
+        message: "Assignment not found",
       });
     }
     let grades = assignment.grades;
@@ -874,17 +859,12 @@ module.exports = {
     try {
       await assignment.save();
       newGrades.forEach(async (item) => {
-        await notificationService.gradeFinalizeNotification(
-          course._id,
-          assignment,
-          item.id,
-          req.user._id
-        );
+        await notificationService.gradeFinalizeNotification(course._id, assignment, item.id, req.user._id);
       });
       res.json({
         code: res.statusCode,
         success: true,
-        message: 'Finalize grades set successfully',
+        message: "Finalize grades set successfully",
       });
     } catch (err) {
       res.json({
@@ -904,7 +884,7 @@ module.exports = {
       return res.json({
         code: res.statusCode,
         success: false,
-        message: 'Student is not in this class',
+        message: "Student is not in this class",
       });
     }
     const assignment = await Assignment.findById(id);
@@ -912,7 +892,7 @@ module.exports = {
       return res.json({
         code: res.statusCode,
         success: false,
-        message: 'Assignment not found',
+        message: "Assignment not found",
       });
     }
     const grades = assignment.grades;
@@ -942,16 +922,11 @@ module.exports = {
     }
     try {
       await assignment.save();
-      notificationService.gradeFinalizeNotification(
-        course._id,
-        assignment,
-        studentId,
-        req.user._id
-      );
+      notificationService.gradeFinalizeNotification(course._id, assignment, studentId, req.user._id);
       res.json({
         code: res.statusCode,
         success: true,
-        message: 'Finalize grade set successfully',
+        message: "Finalize grade set successfully",
       });
     } catch (err) {
       res.json({
@@ -972,7 +947,7 @@ module.exports = {
       return res.json({
         code: res.statusCode,
         success: false,
-        message: 'Assignment not found',
+        message: "Assignment not found",
       });
     }
     const grade = assignment.grades.find((item) => {
@@ -987,16 +962,11 @@ module.exports = {
     });
     try {
       await newReview.save();
-      await notificationService.newGradeReviewNotification(
-        course,
-        req.user._id,
-        req.user.name,
-        assignment
-      );
+      await notificationService.newGradeReviewNotification(course, req.user._id, req.user.name, assignment);
       res.json({
         code: res.statusCode,
         success: true,
-        message: 'Grade review submitted successfully',
+        message: "Grade review submitted successfully",
       });
     } catch (err) {
       console.error(err);
@@ -1016,7 +986,7 @@ module.exports = {
       return res.json({
         code: res.statusCode,
         success: false,
-        message: 'Assignment not found',
+        message: "Assignment not found",
       });
     }
     let gradeReviews = await GradeReview.find({ assignmentId });
@@ -1040,13 +1010,12 @@ module.exports = {
     if (
       !review ||
       review.assignmentId.toString() !== assignmentId.toString() ||
-      (!isTeacher &&
-        review.studentId.toString() !== req.user.student.toString())
+      (!isTeacher && review.studentId.toString() !== req.user.student.toString())
     ) {
       return res.json({
         code: 404,
         success: false,
-        message: 'Review not found',
+        message: "Review not found",
       });
     }
     res.json({
@@ -1063,13 +1032,12 @@ module.exports = {
     if (
       !review ||
       review.assignmentId.toString() !== assignmentId.toString() ||
-      (!isTeacher &&
-        review.studentId.toString() !== req.user.student.toString())
+      (!isTeacher && review.studentId.toString() !== req.user.student.toString())
     ) {
       return res.json({
         code: 404,
         success: false,
-        message: 'Review not found',
+        message: "Review not found",
       });
     }
     try {
@@ -1077,7 +1045,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: true,
-        message: 'Review deleted successfully',
+        message: "Review deleted successfully",
       });
     } catch (err) {
       res.json({
@@ -1099,7 +1067,7 @@ module.exports = {
       return res.json({
         code: res.statusCode,
         success: false,
-        message: 'Assignment not found',
+        message: "Assignment not found",
       });
     }
     const review = await GradeReview.findById(reviewId);
@@ -1107,13 +1075,12 @@ module.exports = {
     if (
       !review ||
       review.assignmentId.toString() !== assignmentId.toString() ||
-      (!isTeacher &&
-        review.studentId.toString() !== req.user.student.toString())
+      (!isTeacher && review.studentId.toString() !== req.user.student.toString())
     ) {
       return res.json({
         code: 404,
         success: false,
-        message: 'Review not found',
+        message: "Review not found",
       });
     }
     const newComment = {
@@ -1135,7 +1102,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: true,
-        message: 'Comment added successfully',
+        message: "Comment added successfully",
         comment: _.last(review.comments),
       });
     } catch (err) {
@@ -1159,7 +1126,7 @@ module.exports = {
       return res.json({
         code: 404,
         success: false,
-        message: 'Review not found',
+        message: "Review not found",
       });
     }
     const assignment = await Assignment.findById(assignmentId);
@@ -1167,7 +1134,7 @@ module.exports = {
       return res.json({
         code: 404,
         success: false,
-        message: 'Assignment not found',
+        message: "Assignment not found",
       });
     }
     if (!approve) {
@@ -1186,7 +1153,7 @@ module.exports = {
         return res.json({
           code: res.statusCode,
           success: true,
-          message: 'Review marked as not approved',
+          message: "Review marked as not approved",
         });
       } catch (err) {
         console.error(err);
@@ -1197,9 +1164,7 @@ module.exports = {
         });
       }
     }
-    const trueGrade = assignment.grades.find(
-      (item) => item.id.toString() === review.studentId.toString()
-    );
+    const trueGrade = assignment.grades.find((item) => item.id.toString() === review.studentId.toString());
     if (trueGrade) {
       trueGrade.grade = grade ?? review.expectedGrade;
     } else {
@@ -1224,7 +1189,7 @@ module.exports = {
       res.json({
         code: res.statusCode,
         success: true,
-        message: 'Review marked as approved',
+        message: "Review marked as approved",
       });
     } catch (err) {
       console.error(err);

@@ -161,23 +161,28 @@ export async function getServerSideProps(ctx) {
       },
     };
   }
-
-  const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/courses/${ctx.query.slug}`, {
-    headers: {
-      Authorization: `Bearer ${_session.jwt}`,
-    },
-  });
-
-  if (res.data.success) {
-    return {
-      props: { course: res.data.course },
-    };
-  } else {
-    return {
-      redirect: {
-        permanent: false,
-        destination: '/courses',
-      },
-    };
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/courses/${ctx.query.slug}`,
+      {
+        headers: {
+          Authorization: `Bearer ${_session.jwt}`,
+        },
+      }
+    );
+    if (res.data.success) {
+      return {
+        props: { course: res.data.course },
+      };
+    } else {
+      return {
+        redirect: {
+          permanent: false,
+          destination: '/courses',
+        },
+      };
+    }
+  } catch (e) {
+    console.log(e);
   }
 }

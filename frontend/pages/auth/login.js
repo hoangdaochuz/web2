@@ -46,7 +46,6 @@ export default function Login({ csrfToken }) {
             });
         } else {
           toast.error(res.data.message);
-          console.log(res.data.message);
         }
       } catch (error) {
         toast.error(error.toString());

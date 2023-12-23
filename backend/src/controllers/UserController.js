@@ -1,11 +1,11 @@
-const bcrypt = require('bcrypt');
-const authenticate = require('../authenticate');
-const User = require('../models/User');
+const bcrypt = require("bcryptjs");
+const authenticate = require("../authenticate");
+const User = require("../models/User");
 
 class UserController {
   // [GET] /users
   index(req, res, next) {
-    User.find({ type: {$ne: 0} })
+    User.find({ type: { $ne: 0 } })
       .then((users) => {
         res.json({
           code: res.statusCode,
@@ -38,7 +38,7 @@ class UserController {
         res.json({
           code: res.statusCode,
           success: false,
-          message: 'StudentId already exists',
+          message: "StudentId already exists",
         });
         return;
       }
@@ -69,36 +69,36 @@ class UserController {
 
   async postCreateAdmin(req, res, next) {
     const { email, password, name, phoneNumber } = req.body;
-    if(password.length > 16 || password.length < 8) {
+    if (password.length > 16 || password.length < 8) {
       res.status(400).json({
         code: res.statusCode,
         success: false,
-        message: 'Password must be 8-16 characters'
-      })
+        message: "Password must be 8-16 characters",
+      });
     }
     const admin = await User.findOne({ email: email });
-    if(admin) {
+    if (admin) {
       res.status(400).json({
         code: res.statusCode,
         success: false,
-        message: 'Email already existed!'
-      })
+        message: "Email already existed!",
+      });
     }
     const newAdmin = new User({
       email,
       password: bcrypt.hashSync(req.body.password, 10),
       name,
       phoneNumber,
-      type: 0
-    })
+      type: 0,
+    });
 
     await newAdmin.save();
     res.status(201).json({
       code: res.statusCode,
       success: true,
       admin: newAdmin,
-      message: 'Create admin successfully!'
-    })
+      message: "Create admin successfully!",
+    });
   }
 
   // [GET] /users/admins
@@ -110,7 +110,8 @@ class UserController {
           success: true,
           admins,
         });
-      }).catch(next);
+      })
+      .catch(next);
   }
 
   // [POST] /users/ban
@@ -122,7 +123,8 @@ class UserController {
           success: true,
           user,
         });
-      }).catch(next);
+      })
+      .catch(next);
   }
 
   // [POST] /users/unlock
@@ -134,31 +136,32 @@ class UserController {
           success: true,
           user,
         });
-      }).catch(next);
+      })
+      .catch(next);
   }
 
   // [PATCH] /users/map
   mapStudentId(req, res, next) {
-    User.findOne({ student: req.body.student })
-      .then((user) => {
-        if (user) {
-          res.status(400).json({
-            code: res.statusCode,
-            success: false,
-            message: 'StudentId already exists',
-          });
-          return;
-        } else {
-          User.findByIdAndUpdate(req.body.id, { student: req.body.student }, { new: true })
+    User.findOne({ student: req.body.student }).then((user) => {
+      if (user) {
+        res.status(400).json({
+          code: res.statusCode,
+          success: false,
+          message: "StudentId already exists",
+        });
+        return;
+      } else {
+        User.findByIdAndUpdate(req.body.id, { student: req.body.student }, { new: true })
           .then((user) => {
             res.status(200).json({
               code: res.statusCode,
               success: true,
               user,
             });
-          }).catch(next);
-        }
-      })
+          })
+          .catch(next);
+      }
+    });
   }
 
   // [PATCH]
@@ -170,7 +173,8 @@ class UserController {
           success: true,
           user,
         });
-      }).catch(next);
+      })
+      .catch(next);
   }
 }
 

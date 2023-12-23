@@ -20,13 +20,13 @@ jobs:
 
       - name: Install Backend Dependencies
         working-directory: backend
-        run: npm ci
+        run: npm install --legacy-peer-deps
       - name: Install Frontend Dependencies
         working-directory: frontend
-        run: npm ci
+        run: npm install --legacy-peer-deps
       - name: Install Admin Dependencies
         working-directory: admin
-        run: npm ci
+        run: npm install --legacy-peer-deps
 
       - name: Build Frontend
         run: npm run build --prefix frontend

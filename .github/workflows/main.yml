@@ -78,12 +78,12 @@ jobs:
 
       - name: Deploy to DigitalOcean
         run: |
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.DROPLET_IP }} << EOF
-          cd /path/to/your/application
           git pull origin main
-          npm install
+          cd /root/backend
+          npm install --legacy-peer-deps
           npm run build
           pm2 restart app
           EOF

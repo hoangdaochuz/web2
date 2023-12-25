@@ -55,17 +55,24 @@ jobs:
       #     cd admin
       #     echo "REACT_APP_BACKEND_URL=${{ secrets.REACT_APP_BACKEND_URL }}" >> .env
 
+      - name: Dotenv Action for frontend
+        uses: falti/dotenv-action@v0.2.4
+        with:
+          path: "./frontend/.env"
       - name: Build Frontend
         run: npm run build --prefix frontend
 
-      - name: Dotenv Action for backend
+      # - name: Dotenv Action for backend
+      #   uses: falti/dotenv-action@v0.2.4
+      #   with:
+      #     path: "./backend/.env"
+      # - name: Build Backend
+      #   run: npm start --prefix backend
+
+      - name: Dotenv Action for admin
         uses: falti/dotenv-action@v0.2.4
         with:
-          path: "./backend/.env"
-
-      - name: Build Backend
-        run: npm start --prefix backend
-
+          path: "./admin/.env"
       - name: Build Admin
         run: npm run build --prefix admin
 

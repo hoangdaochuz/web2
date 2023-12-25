@@ -1,11 +1,12 @@
-const passport = require('passport');
-const FacebookTokenStrategy = require('passport-facebook-token');
-const GoogleTokenStrategy = require('passport-google-token').Strategy;
-const JwtStrategy = require('passport-jwt').Strategy;
-const ExtractJWT = require('passport-jwt').ExtractJwt;
-const jwt = require('jsonwebtoken');
-const config = require('./config/mainConfig');
-const User = require('./models/User');
+const passport = require("passport");
+const FacebookTokenStrategy = require("passport-facebook-token");
+const GoogleTokenStrategy = require("passport-google-token").Strategy;
+const JwtStrategy = require("passport-jwt").Strategy;
+const ExtractJWT = require("passport-jwt").ExtractJwt;
+const jwt = require("jsonwebtoken");
+const config = require("./config/mainConfig");
+console.log("🚀 ~ file: authenticate.js:8 ~ config:", config);
+const User = require("./models/User");
 
 passport.serializeUser(function (user, done) {
   done(null, user);
@@ -103,12 +104,12 @@ exports.facebookPassport = passport.use(
   )
 );
 
-exports.verifyFacebook = passport.authenticate('facebook-token', {
+exports.verifyFacebook = passport.authenticate("facebook-token", {
   session: false,
 });
 
-exports.verifyGoogle = passport.authenticate('google-token', {
+exports.verifyGoogle = passport.authenticate("google-token", {
   session: false,
 });
 
-exports.verifyUser = passport.authenticate('jwt', { session: false });
+exports.verifyUser = passport.authenticate("jwt", { session: false });
